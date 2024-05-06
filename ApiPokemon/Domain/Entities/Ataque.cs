@@ -2,7 +2,7 @@
 {
     public class Ataque
     {
-        public string Nombre { get; set; }
-        public int Poder { get; set; }
+        public string nombre { get; set; }
+        public int poder { get; set; }
     }
 }
