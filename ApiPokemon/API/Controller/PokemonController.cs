@@ -2,6 +2,8 @@
 using ApiPokemon.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ApiPokemon.API.Controller
 {
@@ -14,6 +16,27 @@ namespace ApiPokemon.API.Controller
 
         [HttpGet("GetAll")]
         public async Task<List<Pokemon>> Get() => await _mongodbService.GetAllAsync();
+
+        [HttpPost("AgregarAtaque/{id}")]
+        public async Task<IActionResult> GetAtaque(string id, [FromBody] List<string> nombres)
+        {
+
+            Pokemon pokemon = await _mongodbService.GetAsyncById(id);
+            Random random = new();
+            List<Ataque> ataques = new List<Ataque>();
+            for (int i = 0; i < nombres.Count; i++)
+            {
+                var x = random.Next(0, 40);
+                ataques.Add(new Ataque { nombre = nombres[i], poder = x });
+            }
+            pokemon.ataques = ataques;
+
+            await _mongodbService.UpdateAsync(id, pokemon);
+
+            return Ok(pokemon);
+        }
+
+
 
         [HttpGet("GetFirst")]
         public async Task<Pokemon> GetPokemonFirst()
@@ -48,24 +71,9 @@ namespace ApiPokemon.API.Controller
         {
             await _mongodbService.CreateManyAsync(pokemons);
             return Ok(pokemons);
-        }
+    }
 
-
-
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody]Pokemon pokemon)
-        {
-            var pokemonToUpdate = await _mongodbService.GetAsyncById(id);
-            if (pokemonToUpdate == null)
-            {
-                return NotFound();
-            }
-            pokemon.id = pokemonToUpdate.id;
-            await _mongodbService.UpdateAsync(id, pokemon);
-            return NoContent();
-        }
-
-        [HttpDelete("Delete/{id}")]
+    [HttpDelete("Delete/{id}")]
         public async Task <IActionResult> Delete(string id)
         {
             var pokemon = await _mongodbService.GetAsyncById(id);

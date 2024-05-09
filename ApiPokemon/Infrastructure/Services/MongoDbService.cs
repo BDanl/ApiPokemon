@@ -31,6 +31,7 @@ namespace ApiPokemon.Infrastructure.Services
         public async Task CreateManyAsync(List<Pokemon> pokemons) => await _pokemons.InsertManyAsync(pokemons);
         public async Task UpdateAsync(string id, Pokemon pokemon) => await _pokemons.ReplaceOneAsync(pokemon => pokemon.id == id, pokemon);
         public async Task DeleteAsync(string id) => await _pokemons.DeleteOneAsync(pokemon => pokemon.id == id);
+
         //public async Task<Pokemon> GetRandomAsync() => await _pokemons.Find(pokemon => true).SortBy(pokemon => _random.Next()).FirstOrDefaultAsync();
         public async Task<Pokemon> GetRandomAsync() {
              var datos = _pokemons.AsQueryable();
