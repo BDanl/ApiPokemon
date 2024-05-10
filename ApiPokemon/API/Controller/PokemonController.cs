@@ -1,9 +1,6 @@
 ﻿using ApiPokemon.Domain.Entities;
 using ApiPokemon.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using static System.Collections.Specialized.BitVector32;
 
 namespace ApiPokemon.API.Controller
 {
@@ -15,35 +12,32 @@ namespace ApiPokemon.API.Controller
         public PokemonController(MongoDbService mongoDbService) => _mongodbService = mongoDbService;
 
         [HttpGet("GetAll")]
-        public async Task<List<Pokemon>> Get() => await _mongodbService.GetAllAsync();
+        public async Task<List<Pokemon>> GetAll() => await _mongodbService.GetAllAsync();
 
-        [HttpPost("AgregarAtaque/{id}")]
-        public async Task<IActionResult> GetAtaque(string id, [FromBody] List<string> nombres)
+        [HttpPost("CreateAtaque/{id}")]
+        public async Task<IActionResult> CreateAtaque(string id, [FromBody] List<string> nombres)
         {
 
             Pokemon pokemon = await _mongodbService.GetAsyncById(id);
             Random random = new();
-            List<Ataque> ataques = new List<Ataque>();
+
             for (int i = 0; i < nombres.Count; i++)
             {
                 var x = random.Next(0, 40);
-                ataques.Add(new Ataque { nombre = nombres[i], poder = x });
+                pokemon.ataques?.Add(new Ataque { nombre = nombres[i], poder = x });
             }
-            pokemon.ataques = ataques;
 
             await _mongodbService.UpdateAsync(id, pokemon);
 
             return Ok(pokemon);
         }
 
-
-
-        [HttpGet("GetFirst")]
+        [HttpGet("GetPokemonFirst")]
         public async Task<Pokemon> GetPokemonFirst()
         {
             var pokemon = await _mongodbService.GetFirstAsync();
 
-            if(pokemon == null)
+            if (pokemon == null)
             {
                 return null;
             }
@@ -57,27 +51,37 @@ namespace ApiPokemon.API.Controller
             return await _mongodbService.GetAllByTypeAsync(tipo);
         }
 
-        [HttpPost("CreateAsync")]
-        public async Task<IActionResult> CreateAsync([FromBody]Pokemon pokemon)
+        [HttpPost("CreateOnePokemonAsync")]
+        public async Task<IActionResult> CreateOneAsync([FromBody] Pokemon pokemon)
         {
+            if (pokemon.ataques == null)
+            {
+                pokemon.ataques = new List<Ataque> { };
+            }
             await _mongodbService.CreateAsync(pokemon);
             return Ok(pokemon);
-            //return CreatedAtAction(nameof(Get), new { id = pokemon.Id }, pokemon);
         }
 
         [HttpPost("CreateManyAsync")]
 
-        public async Task<IActionResult> CreateManyAsync([FromBody] List<Pokemon> pokemons)
+        public async Task<IActionResult> CreateManyPokemonAsync([FromBody] List<Pokemon> pokemons)
         {
+            foreach (var pokemon in pokemons)
+            {
+                if (pokemon.ataques == null)
+                {
+                    pokemon.ataques = new List<Ataque> { };
+                }
+            }
             await _mongodbService.CreateManyAsync(pokemons);
             return Ok(pokemons);
-    }
+        }
 
-    [HttpDelete("Delete/{id}")]
-        public async Task <IActionResult> Delete(string id)
+        [HttpDelete("DeletePokemon/{id}")]
+        public async Task<IActionResult> DeletePokemon(string id)
         {
             var pokemon = await _mongodbService.GetAsyncById(id);
-            if(pokemon == null)
+            if (pokemon == null)
             {
                 return NotFound();
             }
@@ -85,8 +89,8 @@ namespace ApiPokemon.API.Controller
             return NoContent();
         }
 
-        [HttpGet("GetRandomAsync")]
-        public async Task<Pokemon> GetPokemonRandom()
+        [HttpGet("GetRandomPokemonAsync")]
+        public async Task<Pokemon> GetRandomPokemonAsync()
         {
             var pokemon = await _mongodbService.GetRandomAsync();
 
