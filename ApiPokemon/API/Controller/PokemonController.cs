@@ -77,6 +77,19 @@ namespace ApiPokemon.API.Controller
             return Ok(pokemons);
         }
 
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody] Pokemon pokemon)
+        {
+            var pokemonToUpdate = await _mongodbService.GetAsyncById(id);
+            if (pokemonToUpdate == null)
+            {
+                return NotFound();
+            }
+            pokemon.id = pokemonToUpdate.id;
+            await _mongodbService.UpdateAsync(id, pokemon);
+            return NoContent();
+        }
+
         [HttpDelete("DeletePokemon/{id}")]
         public async Task<IActionResult> DeletePokemon(string id)
         {
