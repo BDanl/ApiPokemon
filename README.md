@@ -19,7 +19,7 @@ https://localhost:7192/api/Pokemon/CreateOnePokemonAsync
 {
   "nombre": "string",
   "tipo": "string",
-  "defensa": 0,
+  "defensa": 0
   
 }
 ```
@@ -59,14 +59,14 @@ Ejemplo:
 {
     "nombre": "string",
     "tipo": "string",
-    "defensa": 0,
+    "defensa": 0
   }<strong> ,
   
   
   {
     "nombre": "Pikachu",
     "tipo": "Rayo",
-    "defensa": 3,
+    "defensa": 3
   }
   </strong>
 
@@ -77,12 +77,12 @@ Ejemplo:
   {
     "nombre": "string",
     "tipo": "string",
-    "defensa": 0,
+    "defensa": 0
   },
   {
     "nombre": "string",
     "tipo": "string",
-    "defensa": 0,
+    "defensa": 0
   }
 ]
 ```
